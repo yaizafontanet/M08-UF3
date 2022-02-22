@@ -1,5 +1,5 @@
 #!/bin/bash
-hostnamectl set-hostname molamogollo.hopto.org
+hostnamectl set-hostname insjdayf.hopto.org
 apt update
 #apt -y install docker.io docker-compose
 apt install -y \
@@ -32,14 +32,14 @@ docker run -d \
     -e "DISABLE_RSPAMD=TRUE" \
     -v dadesmailserver:/data \
     --name "mailserver" \
-    -h "molamogollo.hopto.org" \
+    -h "insjdayf.hopto.org" \
     -t analogic/poste.io
 sleep 30
-docker exec mailserver poste domain:create molamogollo.hopto.org
-docker exec mailserver poste email:create admin@molamogollo.hopto.org !Sup3rs€cr3t@!
-docker exec mailserver poste email:admin admin@molamogollo.hopto.org
-#sudo apt-get update
-#sudo apt-get install -y apache2
-#sudo systemctl start apache2
-#sudo systemctl enable apache2
+docker exec mailserver poste domain:create insjdayf.hopto.org
+docker exec mailserver poste email:create admin@insjdayf.hopto.org !Sup3rs€cr3t@!
+docker exec mailserver poste email:admin admin@insjdayf.hopto.org
+sudo apt-get update
+sudo apt-get install -y apache2
+sudo systemctl start apache2
+sudo systemctl enable apache2
 echo "<h1>Deployed via Terraform</h1>" | sudo tee /tmp/index.html
