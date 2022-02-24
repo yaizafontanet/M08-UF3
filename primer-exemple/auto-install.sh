@@ -2,10 +2,10 @@
 sudo apt update
 sudo apt upgrade -y
 #instalar postfix y poner archivo de configuración
-sudo apt install -y postfix
-sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.backup
-sudo rm /etc/postfix/main.cf
-sudo cp main.cf /etc/postfix/
+debconf-set-selections <<< "postfix postfix/mailname string insjdayf.hopto.org"
+debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
+apt-get install --assume-yes postfix
+sudo postconf -e 'home_mailbox= Maildir/'
 sudo systemctl restart postfix.service
 #instalar dovecot y poner archivo de configuración
 sudo apt install -y dovecot-core dovecot-pop3d dovecot impad
