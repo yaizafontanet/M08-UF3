@@ -1,0 +1,17 @@
+;
+; BIND data file for local loopback interface
+;
+$TTL    604800
+@       IN      SOA     ns1.insjdayf.hopto.org. root.insjdayf.hopto.org. (
+                                 2          ; Serial
+                            604800          ; Refresh
+                             86400          ; Retry
+                           2419200          ; Expire
+                            604800 )        ; Negative Cache TTL
+;
+@       IN      NS      asixyf.insjdayf.hopto.org.
+@       IN      A       10.20.108.1
+@       IN      AAAA    ::1
+asixyf  IN      A       10.20.108.1
+    
+webmail IN      CNAME   asixyf

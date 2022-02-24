@@ -82,49 +82,17 @@ sudo systemctl restart apache2.service
 #instalar bind9
 sudo apt update
 sudo apt install -y bind9
-#sudo cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.backup
-#sudo rm /etc/netplan/50-cloud-init.yaml
-#sudo cp 50-cloud-init.yaml /etc/netplan/
+sudo cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.backup
+sudo rm /etc/netplan/50-cloud-init.yaml
+sudo cp 50-cloud-init.yaml /etc/netplan/
 sudo cp /etc/bind/named.conf.options /etc/bind/named.conf.options.backup
 sudo rm /etc/bind/named.conf.options
 sudo cp named.conf.options /etc/bind/
-#sudo cp /etc/bind/named.conf.local /etc/bind/named.conf.local.backup
-#sudo rm /etc/bind/named.conf.local
-#sudo cp named.conf.local /etc/bind/
-///CREAR ARCHIVOS FORWARD Y REVERSE///
-#sudo cp /etc/bind/named.conf.local /etc/bind/named.conf.local.backup
-#sudo rm /etc/bind/named.conf.local
-#sudo cp named.conf.local /etc/bind/
+sudo cp /etc/bind/named.conf.local /etc/bind/named.conf.local.backup
+sudo rm /etc/bind/named.conf.local
+sudo cp named.conf.local /etc/bind/
+sudo cp forward.insjdayf.hopto.org /etc/bind/
+sudo cp reverse.insjdayf.hopto.org /etc/bind/
+sudo systemctl restart bind9.service
 
 #Configurar rouncube
-
-
-
-
-
-
-###export COMPOSE_INTERACTIVE_NO_CLI=1
-#export DISABLE_CLAMAV=TRUE
-export DISABLE_RSPAMD=TRUE
-usermod -aG docker ubuntu
-### bash /tmp/2018smxm7/uf2/lab30/up.sh
-docker volume rm dadesmailserver
-docker volume create dadesmailserver
-##    -e "DISABLE_CLAMAV=TRUE" \
-docker run -d \
-    --net=host \
-    -e TZ=Europe/Andorra \
-    -e "DISABLE_RSPAMD=TRUE" \
-    -v dadesmailserver:/data \
-    --name "mailserver" \
-    -h "insjdayf.hopto.org" \
-    -t analogic/poste.io
-sleep 30
-docker exec mailserver poste domain:create insjdayf.hopto.org
-docker exec mailserver poste email:create admin@insjdayf.hopto.org !Sup3rs€cr3t@!
-docker exec mailserver poste email:admin admin@insjdayf.hopto.org
-sudo apt-get update
-sudo apt-get install -y apache2
-sudo systemctl start apache2
-sudo systemctl enable apache2
-echo "<h1>Deployed via Terraform</h1>" | sudo tee /tmp/index.html
