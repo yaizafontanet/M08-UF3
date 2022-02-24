@@ -1,0 +1,17 @@
+//
+// Do any local configuration here
+//
+
+// Consider adding the 1918 zones here, if they are not used in your
+// organization
+//include "/etc/bind/zones.rfc1918";
+
+zone "insjdayf.hopto.org" {
+    type master;
+    file "/etc/bind/forward.insjdayf.hopto.org";
+};
+
+zone "108.20.10.in-addr.arpa" {
+    type master;
+    file "/etc/bind/reverse.insjdayf.hopto.org";
+};
