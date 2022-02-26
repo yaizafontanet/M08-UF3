@@ -14,7 +14,9 @@ sudo systemctl restart postfix.service
 #instalar dovecot y configurar
 apt update
 apt install -y dovecot-core
+apt update
 apt install -y dovecot-pop3d
+apt update
 apt install -y dovecot-impad
 cp /etc/dovecot/conf.d/10-auth.conf /etc/dovecot/conf.d/10-auth.conf.backup
 sed -i '/^disable_plaintext_auth =.*/s/^/#/g' /etc/dovecot/conf.d/10-auth.conf
