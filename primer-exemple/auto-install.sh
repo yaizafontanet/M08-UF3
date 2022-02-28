@@ -70,3 +70,17 @@ create user $MYSQL_USER@localhost identified by $MYSQL_PASSWORD;
 grant all privileges on $DB.* to $MYSQL_USER@localhost; 
 flush privileges;
 EOF
+
+#instalar php
+apt install -y php7.4 libapache2-mod-php7.4 php7.4-common php7.4-mysql php7.4-cli php-pear php7.4-opcache php7.4-gd php7.4-curl php7.4-cli php7.4-imap php7.4-mbstring php7.4-intl php7.4-soap php7.4-ldap php-imagick php7.4-xml php7.4-zip
+pear install Auth_SASL2 Net_SMTP Net_IDNA2-0.1.1 Mail_mime Mail_mimeDecode
+#instalar apache
+apt-get update
+apt-get install -y apache2
+systemctl start apache2
+systemctl enable apache2
+#instalar roundcube
+wget https://github.com/roundcube/roundcubemail/releases/download/1.5.2/roundcubemail-1.5.2-complete.tar.gz
+tar -xvzf roundcubemail-1.5.2-complete.tar.gz
+mv roundcubemail-1.5.2 /var/www/html/roundcube
+chown -R www-data:www-data /var/www/html/roundcube/
