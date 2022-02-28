@@ -10,54 +10,29 @@ LAST=$(echo $IP | cut -d . -f 4)
 
 #Creación de dos usuarios
 PASSWD='test01'
+sudo adduser yaiza << ENDX
+$PASSWD
+$PASSWD
+First Last
 
-USER1=$(expect -c "
-set timeout 10
-adduser yaiza
 
-expect \"New password:\" 
-send \"$PASSWD\r\" 
-expect \"Retype new password:\" 
-send \"$PASSWD\r\" 
-expect \"Full Name []:\" 
-send \"\r\"
-expect \"Room Number []:\"
-send \"\r\"
-expect \"Work Phone []:\"
-send \"\r\"
-expect \"Home Phone []:\"
-send \"\r\"
-expect \"Other []:\"
-send \"\r\"
-expect \"Is the information correct? [Y/n]\"
-send \"Y\r\"
-expect eof
-")
-echo USER1 
 
-USER2=$(expect -c "
-set timeout 10
-adduser fontanet
 
-expect \"New password:\" 
-send \"$PASSWD\r\" 
-expect \"Retype new password:\" 
-send \"$PASSWD\r\" 
-expect \"Full Name []:\" 
-send \"\r\"
-expect \"Room Number []:\"
-send \"\r\"
-expect \"Work Phone []:\"
-send \"\r\"
-expect \"Home Phone []:\"
-send \"\r\"
-expect \"Other []:\"
-send \"\r\"
-expect \"Is the information correct? [Y/n]\"
-send \"Y\r\"
-expect eof
-")
-echo USER2
+Y
+ENDX
+exit 0
+
+sudo adduser fontanet << ENDX
+$PASSWD
+$PASSWD
+First Last
+
+
+
+
+Y
+ENDX
+exit 0
 
 #instalar postfix y configurar Maildir
 apt update
