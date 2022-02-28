@@ -9,30 +9,7 @@ IP=$(ifdata -pa eth0)
 LAST=$(echo $IP | cut -d . -f 4)
 
 #Creación de dos usuarios
-PASSWD='test01'
-sudo adduser yaiza << ENDX
-$PASSWD
-$PASSWD
-First Last
 
-
-
-
-Y
-ENDX
-exit 0
-
-sudo adduser fontanet << ENDX
-$PASSWD
-$PASSWD
-First Last
-
-
-
-
-Y
-ENDX
-exit 0
 
 #instalar postfix y configurar Maildir
 apt update
