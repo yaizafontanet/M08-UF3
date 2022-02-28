@@ -159,20 +159,20 @@ echo ""$TTL"    604800
 @               IN      NS      $ME.$DOMAIN.
 @               IN      A       $IP
 @               IN      AAAA    ::1
-$ME             IN      A       $IP
+$ME IN      A       $IP
     
 webmail         IN      CNAME   $ME
 " > /etc/bind/forward.$DOMAIN 
 
 echo ""$TTL"    604800
-@       IN      SOA     $ME.$DOMAIN. root.$DOMAIN. (
+@     IN      SOA     $ME.$DOMAIN. root.$DOMAIN. (
                             1         ; Serial
                        604800         ; Refresh
                         86400         ; Retry
                       2419200         ; Expire
                        604800 )       ; Negative Cache TTL
 ;
-@       IN      NS      $ME.
+@     IN      NS      $ME.
 $LAST   IN      PTR     $ME.$DOMAIN.
 " > /etc/bind/reverse.$DOMAIN 
 sudo systemctl restart bind9.service
