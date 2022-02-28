@@ -1,5 +1,7 @@
 #!/bin/bash
 DOMAIN='insjdayf.hopto.org'
+ME='ip-10-0-1-6'
+IP=$instance_public_ip
 
 apt update
 apt upgrade -y
@@ -111,5 +113,56 @@ echo "<VirtualHost *:80>
 systemctl restart apache2.service
 
 #instalar y configurar bind9
-sudo apt update
-sudo apt install -y bind9
+apt update
+apt install -y bind9
+cp /etc/bind/named.conf.options /etc/bind/named.conf.options.backup
+rm /etc/bind/named.conf.options
+echo "options {
+    directory "/var/cache/bind";
+    forwarders {
+        80.58.61.250;
+        80.58.61.254;
+    };
+    dnssec-validation auto;
+    listen-on-v6 { any; };
+};" > /etc/bind/named.conf.options
+
+cp /etc/bind/named.conf.local /etc/bind/named.conf.local.backup
+rm /etc/bind/named.conf.local
+echo "zone "$DOMAIN" {
+    type master;
+    file "/etc/bind/forward.$DOMAIN";
+    };
+    zone "1.0.10.in-addr.arpa" {
+        type master;
+        file "/etc/bind/reverse.$DOMAIN";
+};" > /etc/bind/named.conf.local
+
+echo "$TTL    604800
+@       IN      SOA     $ME.$DOMAIN. root.$DOMAIN. (
+                            2         ; Serial
+                       604800         ; Refresh
+                        86400         ; Retry
+                      2419200         ; Expire
+                       604800 )       ; Negative Cache TTL
+;
+@       IN      NS      $ME.$DOMAIN.
+@       IN      A       10.0.1.6
+@       IN      AAAA    ::1
+$ME     IN      A       10.0.1.6
+    
+webmail IN      CNAME   $ME
+" > /etc/bind/forward.$DOMAIN 
+
+echo "$TTL    604800
+@       IN      SOA     $ME.$DOMAIN. root.$DOMAIN. (
+                            1         ; Serial
+                       604800         ; Refresh
+                        86400         ; Retry
+                      2419200         ; Expire
+                       604800 )       ; Negative Cache TTL
+;
+@       IN      NS      $ME.
+6       IN      PTR     $ME.$DOMAIN.
+" > /etc/bind/reverse.$DOMAIN 
+sudo systemctl restart bind9.service
