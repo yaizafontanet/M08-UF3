@@ -63,7 +63,7 @@ MYSQL_USER='roundcube'
 MYSQL_PASSWORD='Yaiza200!'
 DB='roundcube'
 
-sudo mysql -h localhost -u root -p $MYSQL_ROOT_PASSWORD EOF
+sudo mysql -h localhost -u root -p "$MYSQL_ROOT_PASSWORD" EOF
 create database $DB;
 create user $MYSQL_USER@localhost identified by $MYSQL_PASSWORD;
 grant all privileges on $DB.* to $MYSQL_USER@localhost; 
