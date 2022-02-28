@@ -114,6 +114,13 @@ echo "<VirtualHost *:80>
 2ensite $RC_SITES
 systemctl restart apache2.service
 
+#Configurar archivo de netplan
+cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.backup
+sed "13i\
+            nameservers:
+                addresses: [$IP]
+" > /etc/netplan/50-cloud-init.yaml
+
 #instalar y configurar bind9
 apt update
 apt install -y bind9
@@ -141,19 +148,19 @@ echo "zone "$DOMAIN" {
 };" > /etc/bind/named.conf.local
 
 echo ""$TTL"    604800
-@       IN      SOA     $ME.$DOMAIN. root.$DOMAIN. (
+@               IN      SOA     $ME.$DOMAIN. root.$DOMAIN. (
                             2         ; Serial
                        604800         ; Refresh
                         86400         ; Retry
                       2419200         ; Expire
                        604800 )       ; Negative Cache TTL
 ;
-@           IN      NS      $ME.$DOMAIN.
-@           IN      A       $IP
-@           IN      AAAA    ::1
-$ME         IN      A       $IP
+@               IN      NS      $ME.$DOMAIN.
+@               IN      A       $IP
+@               IN      AAAA    ::1
+$ME             IN      A       $IP
     
-webmail IN      CNAME   $ME
+webmail         IN      CNAME   $ME
 " > /etc/bind/forward.$DOMAIN 
 
 echo ""$TTL"    604800
