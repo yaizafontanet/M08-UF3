@@ -3,6 +3,7 @@ DOMAIN='insjdayf.hopto.org'
 
 apt update
 apt upgrade -y
+
 #instalar postfix y configurar Maildir
 apt update
 debconf-set-selections <<< "postfix postfix/mailname string insjdayf.hopto.org"
@@ -11,6 +12,7 @@ apt-get install --assume-yes postfix
 cp /etc/postfix/main.cf /etc/postfix/main.cf.backup
 postconf -e 'home_mailbox= Maildir/'
 systemctl restart postfix.service
+
 #instalar dovecot y configurar
 apt update
 apt install -y dovecot-core
@@ -26,10 +28,12 @@ sed -i '/^mail_location =.*/s/^/#/g' /etc/dovecot/conf.d/10-mail.conf
 echo "mail_location = mailbox:~/Maildir" >> /etc/dovecot/conf.d/10-mail.conf
 apt install -y dovecot-impad
 systemctl restart dovecot.service
+
 #instalar mysql-server i configurar
 sudo apt update
 MYSQL_ROOT_PASSWORD='Yaiza200!'
 sudo apt install -y mysql-server
+
 #sudo mysql_sercure_installation
 MYSQL=$(grep 'temporary password' /var/log/mysqld.log | awk '{print $11}') 
 SECURE_MYSQL=$(expect -c " 
@@ -73,13 +77,39 @@ EOF
 #instalar php
 apt install -y php7.4 libapache2-mod-php7.4 php7.4-common php7.4-mysql php7.4-cli php-pear php7.4-opcache php7.4-gd php7.4-curl php7.4-cli php7.4-imap php7.4-mbstring php7.4-intl php7.4-soap php7.4-ldap php-imagick php7.4-xml php7.4-zip
 pear install Auth_SASL2 Net_SMTP Net_IDNA2-0.1.1 Mail_mime Mail_mimeDecode
+
 #instalar apache
 apt-get update
 apt-get install -y apache2
 systemctl start apache2
 systemctl enable apache2
+
 #instalar roundcube
 wget https://github.com/roundcube/roundcubemail/releases/download/1.5.2/roundcubemail-1.5.2-complete.tar.gz
 tar -xvzf roundcubemail-1.5.2-complete.tar.gz
 mv roundcubemail-1.5.2 /var/www/html/roundcube
 chown -R www-data:www-data /var/www/html/roundcube/
+
+#configurar arxiu de sites-available per roundcube
+RC_ROOT='/var/www/html/roundcube'
+RC_SITES='/etc/apache2/sites-available/roundcube.conf'
+echo "<VirtualHost *:80>
+        DocumentRoot $RC_ROOT
+        ServerName $DOMAIN
+        
+        <Directory /var/www/html/roundcube/>
+            Options -Indexes
+            AllowOverride All
+            Order allow,deny
+            allow from all
+        </Directory>
+
+        ErrorLog  ${APACHE_LOG_DIR}/roundcube_error.log
+        CustomLog ${APACHE_LOG_DIR}/roundcube_access.log combined
+</VirtualHost>" > $RC_SITES
+2ensite $RC_SITES
+systemctl restart apache2.service
+
+#instalar y configurar bind9
+sudo apt update
+sudo apt install -y bind9
