@@ -1,10 +1,12 @@
 #!/bin/bash
-DOMAIN='insjdayf.hopto.org'
-ME='ip-10-0-1-6'
-IP=$instance_public_ip
-
 apt update
 apt upgrade -y
+apt install -y moreutils
+
+DOMAIN='insjdayf.hopto.org'
+ME=$(echo $HOSTNAME)
+IP=$(ifdata -pa eth0)
+LAST=$(echo $IP | cut -d . -f 4)
 
 #instalar postfix y configurar Maildir
 apt update
@@ -33,10 +35,10 @@ systemctl restart dovecot.service
 
 #instalar mysql-server i configurar
 sudo apt update
-MYSQL_ROOT_PASSWORD='Yaiza200!'
 sudo apt install -y mysql-server
 
 #sudo mysql_sercure_installation
+MYSQL_ROOT_PASSWORD='Yaiza200!'
 MYSQL=$(grep 'temporary password' /var/log/mysqld.log | awk '{print $11}') 
 SECURE_MYSQL=$(expect -c " 
 
@@ -138,7 +140,7 @@ echo "zone "$DOMAIN" {
         file "/etc/bind/reverse.$DOMAIN";
 };" > /etc/bind/named.conf.local
 
-echo "$TTL    604800
+echo ""$TTL"    604800
 @       IN      SOA     $ME.$DOMAIN. root.$DOMAIN. (
                             2         ; Serial
                        604800         ; Refresh
@@ -146,15 +148,15 @@ echo "$TTL    604800
                       2419200         ; Expire
                        604800 )       ; Negative Cache TTL
 ;
-@       IN      NS      $ME.$DOMAIN.
-@       IN      A       10.0.1.6
-@       IN      AAAA    ::1
-$ME     IN      A       10.0.1.6
+@           IN      NS      $ME.$DOMAIN.
+@           IN      A       $IP
+@           IN      AAAA    ::1
+$ME         IN      A       $IP
     
 webmail IN      CNAME   $ME
 " > /etc/bind/forward.$DOMAIN 
 
-echo "$TTL    604800
+echo ""$TTL"    604800
 @       IN      SOA     $ME.$DOMAIN. root.$DOMAIN. (
                             1         ; Serial
                        604800         ; Refresh
@@ -163,6 +165,6 @@ echo "$TTL    604800
                        604800 )       ; Negative Cache TTL
 ;
 @       IN      NS      $ME.
-6       IN      PTR     $ME.$DOMAIN.
+$LAST   IN      PTR     $ME.$DOMAIN.
 " > /etc/bind/reverse.$DOMAIN 
 sudo systemctl restart bind9.service
