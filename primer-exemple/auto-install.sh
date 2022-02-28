@@ -26,3 +26,47 @@ sed -i '/^mail_location =.*/s/^/#/g' /etc/dovecot/conf.d/10-mail.conf
 echo "mail_location = mailbox:~/Maildir" >> /etc/dovecot/conf.d/10-mail.conf
 apt install -y dovecot-impad
 systemctl restart dovecot.service
+#instalar mysql-server i configurar
+apt update
+MYSQL_ROOT_PASSWORD='Yaiza200!'
+
+apt install -y mysql-server
+mysql_sercure_installation
+MYSQL=$(grep 'temporary password' /var/log/mysqld.log | awk '{print $11}') 
+SECURE_MYSQL=$(expect -c " 
+
+set timeout 10 
+spawn mysql_secure_installation 
+
+expect \"Enter password for user root:\" 
+send \"$MYSQL\r\" 
+expect \"New password:\" 
+send \"$MYSQL_ROOT_PASSWORD\r\" 
+expect \"Re-enter new password:\" 
+send \"$MYSQL_ROOT_PASSWORD\r\" 
+expect \"Change the password for root ?\ ((Press y\|Y for Yes, any other key for No) :\" 
+send \"n\r\" 
+expect \"Do you wish to continue with the password provided?\(Press y\|Y for Yes, any other key for No) :\" 
+send \"y\r\" 
+expect \"Remove anonymous users?\(Press y\|Y for Yes, any other key for No) :\" 
+send \"y\r\" 
+expect \"Disallow root login remotely?\(Press y\|Y for Yes, any other key for No) :\" 
+send \"n\r\" 
+expect \"Remove test database and access to it?\(Press y\|Y for Yes, any other key for No) :\" 
+send \"y\r\" 
+expect \"Reload privilege tables now?\(Press y\|Y for Yes, any other key for No) :\" 
+send \"y\r\" 
+expect eof 
+")
+echo $SECURE_MYSQL
+
+MYSQL_USER='roundcube'
+MYSQL_PASSWORD='Yaiza200!'
+DB='roundcube'
+
+mysql -h localhost -u root -p $MYSQL_ROOT_PASSWORD EOF
+create database $DB;
+create user $MYSQL_USER@localhost identified by $MYSQL_PASSWORD;
+grant all privileges on $DB.* to $MYSQL_USER@localhost; 
+flush privileges;
+EOF
