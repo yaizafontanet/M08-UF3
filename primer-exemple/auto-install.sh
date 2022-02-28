@@ -31,7 +31,7 @@ apt update
 MYSQL_ROOT_PASSWORD='Yaiza200!'
 
 apt install -y mysql-server
-mysql_sercure_installation
+mysql_secure_installation
 MYSQL=$(grep 'temporary password' /var/log/mysqld.log | awk '{print $11}') 
 SECURE_MYSQL=$(expect -c " 
 
