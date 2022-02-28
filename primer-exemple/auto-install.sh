@@ -9,8 +9,8 @@ debconf-set-selections <<< "postfix postfix/mailname string insjdayf.hopto.org"
 debconf-set-selections <<< "postfix postfix/main_mailer_type string 'Internet Site'"
 apt-get install --assume-yes postfix
 cp /etc/postfix/main.cf /etc/postfix/main.cf.backup
-sudo postconf -e 'home_mailbox= Maildir/'
-sudo systemctl restart postfix.service
+postconf -e 'home_mailbox= Maildir/'
+systemctl restart postfix.service
 #instalar dovecot y configurar
 apt update
 apt install -y dovecot-core
@@ -27,11 +27,10 @@ echo "mail_location = mailbox:~/Maildir" >> /etc/dovecot/conf.d/10-mail.conf
 apt install -y dovecot-impad
 systemctl restart dovecot.service
 #instalar mysql-server i configurar
-apt update
+sudo apt update
 MYSQL_ROOT_PASSWORD='Yaiza200!'
-
-apt install -y mysql-server
-mysql_secure_installation
+sudo apt install -y mysql-server
+#sudo mysql_sercure_installation
 MYSQL=$(grep 'temporary password' /var/log/mysqld.log | awk '{print $11}') 
 SECURE_MYSQL=$(expect -c " 
 
@@ -64,7 +63,7 @@ MYSQL_USER='roundcube'
 MYSQL_PASSWORD='Yaiza200!'
 DB='roundcube'
 
-mysql -h localhost -u root -p $MYSQL_ROOT_PASSWORD EOF
+sudo mysql -h localhost -u root -p $MYSQL_ROOT_PASSWORD EOF
 create database $DB;
 create user $MYSQL_USER@localhost identified by $MYSQL_PASSWORD;
 grant all privileges on $DB.* to $MYSQL_USER@localhost; 
