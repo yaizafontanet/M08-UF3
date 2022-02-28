@@ -8,6 +8,57 @@ ME=$(echo $HOSTNAME)
 IP=$(ifdata -pa eth0)
 LAST=$(echo $IP | cut -d . -f 4)
 
+#Creación de dos usuarios
+PASSWD='test01'
+
+USER1=$(expect -c "
+set timeout 10
+adduser yaiza
+
+expect \"New password:\" 
+send \"$PASSWD\r\" 
+expect \"Retype new password:\" 
+send \"$PASSWD\r\" 
+expect \"Full Name []:\" 
+send \"\r\"
+expect \"Room Number []:\"
+send \"\r\"
+expect \"Work Phone []:\"
+send \"\r\"
+expect \"Home Phone []:\"
+send \"\r\"
+expect \"Other []:\"
+send \"\r\"
+expect \"Is the information correct? [Y/n]\"
+send \"Y\r\"
+expect eof
+")
+echo USER1 
+
+USER2=$(expect -c "
+set timeout 10
+adduser fontanet
+
+expect \"New password:\" 
+send \"$PASSWD\r\" 
+expect \"Retype new password:\" 
+send \"$PASSWD\r\" 
+expect \"Full Name []:\" 
+send \"\r\"
+expect \"Room Number []:\"
+send \"\r\"
+expect \"Work Phone []:\"
+send \"\r\"
+expect \"Home Phone []:\"
+send \"\r\"
+expect \"Other []:\"
+send \"\r\"
+expect \"Is the information correct? [Y/n]\"
+send \"Y\r\"
+expect eof
+")
+echo USER2
+
 #instalar postfix y configurar Maildir
 apt update
 debconf-set-selections <<< "postfix postfix/mailname string insjdayf.hopto.org"
@@ -116,10 +167,11 @@ systemctl restart apache2.service
 
 #Configurar archivo de netplan
 cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.backup
-sed "13i\
+sed "13a\
             nameservers:
                 addresses: [$IP]
 " > /etc/netplan/50-cloud-init.yaml
+netplan apply
 
 #instalar y configurar bind9
 apt update
