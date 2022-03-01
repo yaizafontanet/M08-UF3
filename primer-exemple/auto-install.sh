@@ -120,9 +120,9 @@ systemctl restart apache2.service
 #Configurar archivo de netplan
 cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.backup
 NAME='          nameservers:'
-ADDSS='             addresses: [$IP]'
-sudo sed -i '14 i $NAME' /etc/netplan/50-cloud-init.yaml
-sudo sed -i '15 i $ADDSS' /etc/netplan/50-cloud-init.yaml
+ADDSS='             addresses: ['$IP']'
+sudo sed -i '14 i '$NAME'' /etc/netplan/50-cloud-init.yaml
+sudo sed -i '15 i '$ADDSS'' /etc/netplan/50-cloud-init.yaml
 netplan apply
 
 #instalar y configurar bind9
