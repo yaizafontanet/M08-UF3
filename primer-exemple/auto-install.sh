@@ -116,7 +116,7 @@ echo "<VirtualHost *:80>
         ErrorLog  ${APACHE_LOG_DIR}/roundcube_error.log
         CustomLog ${APACHE_LOG_DIR}/roundcube_access.log combined
 </VirtualHost>" > $RC_SITES
-2ensite $RC_SITES
+a2ensite $RC_SITES
 systemctl restart apache2.service
 
 #Configurar archivo de netplan
