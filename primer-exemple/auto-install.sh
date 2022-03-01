@@ -2,11 +2,13 @@
 apt update
 apt upgrade -y
 apt install -y moreutils
+apt install -y net-tools
 
 DOMAIN='insjdayf.hopto.org'
 ME=$(echo $HOSTNAME)
 IP=$(ifdata -pa eth0)
 LAST=$(echo $IP | cut -d . -f 4)
+MAC=$(ip addr show $(awk 'NR==3{print $1}' /proc/net/wireless | tr -d :) | awk '/ether/{print $2}')
 
 #Creación de dos usuarios
 
@@ -102,7 +104,7 @@ RC_ROOT='/var/www/html/roundcube'
 RC_SITES='/etc/apache2/sites-available/roundcube.conf'
 echo "<VirtualHost *:80>
         DocumentRoot $RC_ROOT
-        ServerName $DOMAIN
+        ServerName webmail.$DOMAIN
         
         <Directory /var/www/html/roundcube/>
             Options -Indexes
@@ -119,10 +121,18 @@ systemctl restart apache2.service
 
 #Configurar archivo de netplan
 cp /etc/netplan/50-cloud-init.yaml /etc/netplan/50-cloud-init.yaml.backup
-NAME='          nameservers:'
-ADDSS='             addresses: ['$IP']'
-sudo sed -i '14 i '$NAME'' /etc/netplan/50-cloud-init.yaml
-sudo sed -i '15 i '$ADDSS'' /etc/netplan/50-cloud-init.yaml
+rm /etc/netplan/50-cloud-init.yaml
+echo "network:
+    ethernets:
+        eth0:
+            dhcp4: true
+            dhcp6: false
+            match:
+                macaddress: $MAC
+            set-name: eth0
+            nameservers:
+                addresses: [$IP]
+    version: 2" > /etc/netplan/50-cloud-init.yaml
 netplan apply
 
 #instalar y configurar bind9
