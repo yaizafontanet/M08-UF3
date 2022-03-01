@@ -126,6 +126,7 @@ i13
 w
 q
 EOF
+
 ed /etc/netplan/50-cloud-init.yaml << EOF
 i14
                 addresses: [$IP]
@@ -133,6 +134,7 @@ i14
 w
 q
 EOF
+
 netplan apply
 
 #instalar y configurar bind9
